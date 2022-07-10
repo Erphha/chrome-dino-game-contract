@@ -9,7 +9,7 @@ contract DinoFactory is Ownable {
     uint256 public cost = 0.008 ether;
     uint256 public maxMintAmount = 5;
     uint256 public maxSupply = 10000;
-    uint public supply = 0;
+    uint public totalSupply = 0;
     uint256 dnaDigits = 16;
     uint256 dnaModulus = 10**dnaDigits;
 
@@ -17,8 +17,6 @@ contract DinoFactory is Ownable {
         string name;
         uint256 dna;
         uint32 level;
-        uint16 winCount;
-        uint16 lossCount;
     }
 
     Dino[] public dinos;
@@ -27,10 +25,11 @@ contract DinoFactory is Ownable {
     mapping(address => uint256) ownerDinoCount;
 
     function _createDino(string memory _name, uint256 _dna) internal {
-        dinos.push(Dino(_name, _dna, 1, 0, 0));
+        dinos.push(Dino(_name, _dna, 1));
         uint256 dinoId = dinos.length - 1;
         dinoToOwner[dinoId] = msg.sender;
         ownerDinoCount[msg.sender]++;
+        totalSupply++;
 
         emit NewDino(dinoId, _name, _dna);
     }
@@ -47,7 +46,7 @@ contract DinoFactory is Ownable {
     function mintRandomDino(string memory _name, uint _amount) public payable{
         require(_amount <=5 , "You are allowed to mint ONLY 5 Dinos at a time.");
         require(ownerDinoCount[msg.sender] <=5 , "You are allowed to own ONLY 5 Dinos.");
-        require(supply <= maxSupply, "Sold out");
+        require(totalSupply <= maxSupply, "Sold out");
         require(msg.value >= cost, "Not enough payment vlaue");
 
         uint randDna = _generateRandomDna(_name);
