@@ -44,7 +44,7 @@ contract DinoFactory is Ownable {
     }
 
     function mintRandomDino(string memory _name, uint _amount) public payable{
-        require(_amount <=5 , "You are allowed to mint ONLY 5 Dinos at a time.");
+        require(_amount <=5 && _amount > 0, "You are allowed to mint ONLY 5 Dinos at a time.");
         require(ownerDinoCount[msg.sender] <=5 , "You are allowed to own ONLY 5 Dinos.");
         require(totalSupply <= maxSupply, "Sold out");
         require(msg.value >= cost, "Not enough payment vlaue");
